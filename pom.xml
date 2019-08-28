@@ -47,7 +47,9 @@
         <module>table</module>
         <module>order</module>
         <module>bill</module>
-        <module>stock</module>
         <module>eureka</module>
+        <module>dashboard</module>
+        <module>stock</module>
+        <module>turbine</module>
     </modules>
 </project>
