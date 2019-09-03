@@ -1,28 +1,12 @@
 spring:
   application:
     name: ApiGw
+  cloud:
+    config:
+      uri: http://localhost:9000/
+      fail-fast: true
+      retry:
+        initial-interval: 2000
+        max-attempts: 3
 
-server:
-  port: 8080
 
-eureka:
-  client:
-    fetchRegistry: true
-    registerWithEureka: false
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka,http://localhost:8762/eureka
-
-zuul:
-  host:
-    connect-timeout-millis: 60000
-    socket-timeout-millis: 60000
-  ignoredServices: '*'
-  routes:
-    guest:
-      path: /dinner/**
-      serviceId: Guest
-      stripPrefix: false
-    order:
-      path: /menu/**
-      serviceId: Order
-      stripPrefix: false

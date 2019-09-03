@@ -52,5 +52,6 @@
         <module>stock</module>
         <module>turbine</module>
         <module>apigw</module>
+        <module>config</module>
     </modules>
 </project>
