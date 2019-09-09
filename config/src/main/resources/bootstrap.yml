@@ -5,9 +5,36 @@ spring:
     config:
       server:
         git:
-          uri: /Users/citrus/Documents/GitHub/config-files
+          uri: https://github.com/AnastasiaRevutskaiia/restaurant-config-files.git
+    bus:
+      trace:
+        enabled: true
 
 server:
   port: 9000
 
+
+management:
+  security:
+    enabled: false
+
+
+
+
+  #As i described earlier, the GitHub will trigger the webhook event for the given URL.
+  #Therefore in order to  receive the webhook event published, you should provide the
+  #public domain name or public ip address. (The localhost and local ip addresses does not work).
+  #
+  #If you do not have public ip address or public domain name set up yet,
+  #you can publish (simulate) the webhook event for the Config Server by
+  #calling the /monitor endpoint with given request body.
+  #Then the Config Server will consider it as a webhook event published by
+  #the related repository service provider and continue with rest of the operations.
+
+  #RUN THIS CODE IN TERMINAL TO SIMULATE THE WEBHOOK
+  #curl -v -X POST "http://localhost:9000/monitor" \
+  #-H "Content-Type: application/json" \
+  #-H "X-Event-Key: repo:push" \
+  #-H "X-Hook-UUID: webhook-uuid" \
+  #-d '{"push": {"changes": []} }'
 
