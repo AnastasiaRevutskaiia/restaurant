@@ -6,6 +6,8 @@ spring:
       server:
         git:
           uri: https://github.com/AnastasiaRevutskaiia/restaurant-config-files.git
+
+    #Next lines give a possibility trace the acks by http://localhost:9000/trace
     bus:
       trace:
         enabled: true

@@ -1,18 +1,28 @@
 package com.ogasimov.labs.springcloud.microservices.table;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.ogasimov.labs.springcloud.microservices.common.AbstractTableCommand;
+import com.ogasimov.labs.springcloud.microservices.common.FreeTableCommand;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.cloud.stream.messaging.Sink;
+import org.springframework.stereotype.Service;
+
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class TableService {
     @Autowired
     private TableRepository tableRepository;
+
+    @StreamListener(Sink.INPUT)
+    private void streamListener(AbstractTableCommand tableCommand) {
+        boolean isFree = (tableCommand instanceof FreeTableCommand);
+        updateTable(tableCommand.getTableId(), isFree);
+    }
 
     public List<Integer> getTableIds() {
         return tableRepository.findAll()
