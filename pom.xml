@@ -47,7 +47,13 @@
         <module>table</module>
         <module>order</module>
         <module>bill</module>
-        <module>stock</module>
         <module>eureka</module>
+        <module>dashboard</module>
+        <module>stock</module>
+        <module>turbine</module>
+        <module>apigw</module>
+        <module>config</module>
+        <module>zipkin</module>
+        <module>common</module>
     </modules>
 </project>

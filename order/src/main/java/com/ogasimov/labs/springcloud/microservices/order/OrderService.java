@@ -1,11 +1,16 @@
 package com.ogasimov.labs.springcloud.microservices.order;
 
-import java.util.List;
-import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
-
+import com.ogasimov.labs.springcloud.microservices.common.AbstractOrderCommand;
+import com.ogasimov.labs.springcloud.microservices.common.CreateBillCommand;
+import com.ogasimov.labs.springcloud.microservices.common.CreateOrderCommand;
+import com.ogasimov.labs.springcloud.microservices.common.MinusStockCommand;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 @Transactional
@@ -19,26 +24,39 @@ public class OrderService {
     @Autowired
     private BillClient billClient;
 
-    public Integer createOrder(Integer tableId, List<Integer> menuItems) {
+    @Autowired
+    private MyChannels channels;
 
-        // catch an exception
-        // when in the order count of menuItems is bigger then on the stock
-        // new Order with this way doesn't create, but table stays still occupy,
-        // and when you try to free table, you received an Exception that "bill can't be find"
-        // and like a result you can't free table using @DeleteMapping("/dinner/{tableId}"),
-        // you have to do this manually in DB
-        try {
-            stockClient.minusFromStock(menuItems);
-        } catch (EntityNotFoundException ex) {
-            ex.getMessage();
+    @StreamListener(MyChannels.ORDER)
+    private void streamListener(AbstractOrderCommand orderCommand) {
+        if (orderCommand instanceof CreateOrderCommand) {
+            createOrder(
+                    orderCommand.getTableId(),
+                    ((CreateOrderCommand) orderCommand).getMenuItems()
+            );
         }
+    }
+
+    public Integer createOrder(Integer tableId, List<Integer> menuItems) {
 
         Order order = new Order();
         order.setTableId(tableId);
         orderRepository.save(order);
 
         final Integer orderId = order.getId();
-        billClient.createBill(tableId, orderId);
+
+        // minus menuItems from stock
+        channels.stock().send(
+                MessageBuilder.withPayload(new MinusStockCommand(menuItems)).build()
+        );
+        // stockClient.minusFromStock(menuItems);
+
+
+        //create bill
+        channels.bill().send(
+                MessageBuilder.withPayload(new CreateBillCommand(tableId, orderId)).build()
+        );
+        //billClient.createBill(tableId, orderId);
 
         return orderId;
     }

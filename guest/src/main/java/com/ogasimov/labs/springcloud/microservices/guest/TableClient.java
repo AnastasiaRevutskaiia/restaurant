@@ -8,13 +8,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import java.util.List;
 
 
-@FeignClient("Table")
+@FeignClient(name = "Table")
 public interface TableClient {
 
     @GetMapping("/tables/free")
     List<Integer> getFreeTables();
+
     @PutMapping("/table/{id}/free")
     void freeTable(@PathVariable("id") Integer id);
+
     @PutMapping("/table/{id}/occupy")
     void occupyTable(@PathVariable("id") Integer id);
 }
