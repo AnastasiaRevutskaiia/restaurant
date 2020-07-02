@@ -32,7 +32,7 @@
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <!--need to set the last one version because there was problem: Unable to connect to JDBC-->
-                <version>8.0.11</version>
+                <version>8.0.16</version>
             </dependency>
             <dependency>
                 <groupId>com.ogasimov.labs.springcloud.microservices</groupId>
